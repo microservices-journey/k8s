@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f /Users/tatsiana_marfel/Documents/learning/microservices-journey/yoke-docker/docker-compose.yml
+    kompose.version: 1.22.0 (955b78124)
+    kompose.service.type: loadbalancer
+  creationTimestamp: null
+  labels:
+    io.kompose.service: elasticsearch
+  name: elasticsearch
+  namespace: yoke-network
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: elasticsearch
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f /Users/tatsiana_marfel/Documents/learning/microservices-journey/yoke-docker/docker-compose.yml
+        kompose.version: 1.22.0 (955b78124)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/yoke-network: "true"
+        io.kompose.service: elasticsearch
+        kompose.service.type: loadbalancer
+    spec:
+      containers:
+        - env:
+            - name: ES_JAVA_OPTS
+              value: -Xms512m -Xmx512m
+            - name: discovery.type
+              value: single-node
+          image: docker.elastic.co/elasticsearch/elasticsearch:7.2.0
+          name: elasticsearch
+          ports:
+            - containerPort: 9200
+            - containerPort: 9300
+          resources: {}
+      restartPolicy: Always
+status: {}

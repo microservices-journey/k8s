@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f /Users/tatsiana_marfel/Documents/learning/microservices-journey/yoke-docker/docker-compose.yml
+    kompose.service.type: loadbalancer
+    kompose.version: 1.22.0 (955b78124)
+    kompose.image-pull-policy: Never
+  creationTimestamp: null
+  labels:
+    io.kompose.service: yoke-zipkin
+  name: yoke-zipkin
+  namespace: yoke-network
+spec:
+  ports:
+    - name: "9411"
+      port: 9411
+      targetPort: 9411
+  selector:
+    io.kompose.service: yoke-zipkin
+  type: LoadBalancer
+status:
+  loadBalancer: {}

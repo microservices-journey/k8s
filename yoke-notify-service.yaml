@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f /Users/tatsiana_marfel/Documents/learning/microservices-journey/yoke-docker/docker-compose.yml
+    kompose.image-pull-policy: Never
+    kompose.service.type: loadbalancer
+    kompose.version: 1.22.0 (955b78124)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: yoke-notify
+  name: yoke-notify
+  namespace: yoke-network
+spec:
+  ports:
+    - name: "8082"
+      port: 8082
+      targetPort: 8082
+  selector:
+    io.kompose.service: yoke-notify
+  type: LoadBalancer
+status:
+  loadBalancer: {}

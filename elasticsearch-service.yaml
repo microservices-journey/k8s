@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f /Users/tatsiana_marfel/Documents/learning/microservices-journey/yoke-docker/docker-compose.yml
+    kompose.version: 1.22.0 (955b78124)
+    kompose.service.type: loadbalancer
+  creationTimestamp: null
+  labels:
+    io.kompose.service: elasticsearch
+  name: elasticsearch
+  namespace: yoke-network
+spec:
+  ports:
+    - name: "9200"
+      port: 9200
+      targetPort: 9200
+    - name: "9300"
+      port: 9300
+      targetPort: 9300
+  selector:
+    io.kompose.service: elasticsearch
+  type: LoadBalancer
+status:
+  loadBalancer: {}

@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f /Users/tatsiana_marfel/Documents/learning/microservices-journey/yoke-docker/docker-compose.yml
+    kompose.service.type: loadbalancer
+    kompose.version: 1.22.0 (955b78124)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: logstash
+  name: logstash
+  namespace: yoke-network
+spec:
+  ports:
+    - protocol: TCP
+      name: "5000"
+      port: 5000
+      targetPort: 5000
+  selector:
+    io.kompose.service: logstash
+  type: LoadBalancer
+status:
+  loadBalancer: {}

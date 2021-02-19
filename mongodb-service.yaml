@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f /Users/tatsiana_marfel/Documents/learning/microservices-journey/yoke-docker/docker-compose.yml
+    kompose.version: 1.22.0 (955b78124)
+    kompose.image-pull-policy: Never
+  creationTimestamp: null
+  labels:
+    io.kompose.service: mongodb
+  name: mongodb
+  namespace: yoke-network
+spec:
+  ports:
+    - name: "27017"
+      port: 27017
+      targetPort: 27017
+  selector:
+    io.kompose.service: mongodb
+status:
+  loadBalancer: {}

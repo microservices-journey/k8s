@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f /Users/tatsiana_marfel/Documents/learning/microservices-journey/yoke-docker/docker-compose.yml
+    kompose.service.type: loadbalancer
+    kompose.version: 1.22.0 (955b78124)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: logstash
+  name: logstash
+  namespace: yoke-network
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: logstash
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f /Users/tatsiana_marfel/Documents/learning/microservices-journey/yoke-docker/docker-compose.yml
+        kompose.service.type: loadbalancer
+        kompose.version: 1.22.0 (955b78124)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/yoke-network: "true"
+        io.kompose.service: logstash
+        kompose.service.expose: logstash
+    spec:
+      containers:
+        - env:
+            - name: LS_JAVA_OPTS
+              value: -Xmx256m -Xms256m
+          image: docker.elastic.co/logstash/logstash:7.2.0
+          name: logstash
+          ports:
+            - containerPort: 5000
+          resources: {}
+          volumeMounts:
+            - mountPath: /logstash
+              name: logstash-config
+      restartPolicy: Always
+      volumes:
+        - name: logstash-config
+          configMap:
+            name: logstash
+            items:
+            - key: logstash.conf
+              path: logstash.conf
+
+status: {}

@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f /Users/tatsiana_marfel/Documents/learning/microservices-journey/yoke-docker/docker-compose.yml
+    kompose.image-pull-policy: Never
+    kompose.service.type: loadbalancer
+    kompose.version: 1.22.0 (955b78124)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: yoke-attender
+  name: yoke-attender
+  namespace: yoke-network
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: yoke-attender
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f /Users/tatsiana_marfel/Documents/learning/microservices-journey/yoke-docker/docker-compose.yml
+        kompose.image-pull-policy: Never
+        kompose.service.type: loadbalancer
+        kompose.version: 1.22.0 (955b78124)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/yoke-network: "true"
+        io.kompose.service: yoke-attender
+    spec:
+      containers:
+        - env:
+            - name: EUREKA_SERVER
+              value: http://yoke-eureka-server:8761/eureka
+            - name: SPRING_PROFILES_ACTIVE
+              value: container
+            - name: ZIPKIN_SERVER
+              value: http://yoke-zipkin:9411
+            - name: LOGSTASH_HOST
+              value: logstash
+            - name: POSTGRES_PASSWORD
+              value: postgres
+          volumeMounts:
+            - name: application-config 
+              mountPath: "/workspace/config" 
+              readOnly: true
+          image: docker.io/library/yoke-attender:1.0.2-SNAPSHOT
+          imagePullPolicy: Never
+          name: yoke-attender
+          ports:
+            - containerPort: 8084
+          resources: {}
+      volumes:
+        - name: application-config
+          configMap:
+            name: yoke-attender
+      restartPolicy: Always
+status: {}
