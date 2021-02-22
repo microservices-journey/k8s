@@ -1,0 +1,85 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: yoke-notify
+  namespace: yoke-network
+  selfLink: /api/v1/namespaces/yoke-network/configmaps/yoke-notify
+  uid: c61c1184-55b4-4a77-86cd-55ba08c3552a
+  resourceVersion: '2239186'
+  creationTimestamp: '2021-02-11T20:07:22Z'
+  managedFields:
+    - manager: kubectl
+      operation: Update
+      apiVersion: v1
+      time: '2021-02-11T20:07:22Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:data':
+          .: {}
+          'f:application-container.yml': {}
+data:
+  application-container.yml: |
+    spring:
+      data:
+        mongodb:
+          host: mongodb
+          port: 27017
+          authentication-database: admin
+          username: root
+          password: ${MONGODB_PASSWORD}
+          database: yoke
+      cloud:
+        stream:
+          bindings:
+            createEvent:
+              group: yoke-notify
+              destination: yoke-create-event
+            deleteEvent:
+              group: yoke-notify
+              destination: yoke-delete-event
+            addEventAttender:
+              group: yoke-notify
+              destination: yoke-add-event-attender
+            deleteEventAttender:
+              group: yoke-notify
+              destination: yoke-delete-event-attender
+          kafka:
+            binder:
+              brokers: yoke-kafka:9092
+            bindings:
+              createEvent:
+                consumer:
+                  maxAttempts: 3
+                  enableDlq: true
+              deleteEvent:
+                consumer:
+                  maxAttempts: 3
+                  enableDlq: true
+              addEventAttender:
+                consumer:
+                  maxAttempts: 3
+                  enableDlq: true
+              deleteEventAttender:
+                consumer:
+                  maxAttempts: 3
+                  enableDlq: true
+        config:
+          discovery:
+            enabled: true
+          fail-fast: true
+          retry:
+           initial-interval: 10000
+           multiplier: 1.5
+           max-attempts: 20
+           max-interval: 15000
+        zipkin:
+          baseUrl: http://yoke-zipkin:9411
+
+    logback:
+      destination:
+        url: logstash
+        port: 5000
+
+    yoke:
+      notify:
+        url: http://yoke-notify/event

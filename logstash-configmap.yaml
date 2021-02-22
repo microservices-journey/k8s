@@ -1,0 +1,42 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: logstash
+  namespace: yoke-network
+  selfLink: /api/v1/namespaces/yoke-network/configmaps/logstash
+  uid: 710343f3-58f9-466d-88f5-1894424d4f47
+  resourceVersion: '3254676'
+  creationTimestamp: '2021-02-11T17:58:59Z'
+  managedFields:
+    - manager: kubectl
+      operation: Update
+      apiVersion: v1
+      time: '2021-02-11T17:58:59Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:data': {}
+    - manager: dashboard
+      operation: Update
+      apiVersion: v1
+      time: '2021-02-19T06:56:31Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:data':
+          'f:logstash.conf': {}
+data:
+  logstash.conf: |-
+    input{
+       beats{
+          port => 5000 
+          codec => json
+       }
+    }
+
+    output{
+       elasticsearch{
+          hosts =>[
+             "http://elasticsearch:9200"
+          ]
+          index =>"yoke-%{app-name}"
+       }
+    }

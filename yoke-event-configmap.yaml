@@ -1,0 +1,70 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: yoke-event
+  namespace: yoke-network
+  selfLink: /api/v1/namespaces/yoke-network/configmaps/yoke-event
+  uid: f94169d8-d809-49a8-9a9c-84933dcca34f
+  resourceVersion: '2239195'
+  creationTimestamp: '2021-02-11T20:07:27Z'
+  managedFields:
+    - manager: kubectl
+      operation: Update
+      apiVersion: v1
+      time: '2021-02-11T20:07:27Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:data':
+          .: {}
+          'f:application-container.yml': {}
+data:
+  application-container.yml: |-
+    spring:
+      datasource:
+        platform: postgres
+        url: jdbc:postgresql://postgres:5432/postgres
+        username: postgres
+        password: ${POSTGRES_PASSWORD}
+      cloud:
+        stream:
+          bindings:
+            createEvent:
+              destination: yoke-create-event
+              producer:
+                partition-count: 3
+            deleteEvent:
+              destination: yoke-delete-event
+              producer:
+                partition-count: 3
+          kafka:
+            binder:
+              brokers: yoke-kafka:9092
+              autoAddPartitions: true
+              
+        jpa:
+          database: POSTGRESQL
+          show-sql: true
+          generate-ddl: true
+          hibernate:
+            ddl-auto: create
+        config:
+          discovery:
+            enabled: true
+          fail-fast: true
+          retry:
+           initial-interval: 10000
+           multiplier: 1.5
+           max-attempts: 20
+           max-interval: 15000
+
+      zipkin:
+        baseUrl: http://yoke-zipkin:9411
+        
+    logback:
+      destination:
+        url: logstash
+        port: 5000
+
+    yoke:
+      notify:
+        url: http://yoke-notify/event
